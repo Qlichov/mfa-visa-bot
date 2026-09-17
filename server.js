@@ -518,15 +518,15 @@ async function handleMessage(msg) {
 
     let textMsg = '';
     if (isNotFound) {
-      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n───────────────────────\n` +
+      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n──────────────\n` +
         `📘 <b>Pasport raqami:</b> <code>${passport}</code>\n` +
-        `───────────────────────\n` +
+        `──────────────\n` +
         `<b>STATUS:</b> ❌ SIZ UCHUN MA'LUMOT YO'Q\n\n` +
         `<i>(TIV teleks bazasida ushbu pasport bo'yicha ma'lumot topilmadi)</i>`;
     } else if (isPending) {
-      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n───────────────────────\n` +
+      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n──────────────\n` +
         `📘 <b>Pasport raqami:</b> <code>${passport}</code>\n` +
-        `───────────────────────\n` +
+        `──────────────\n` +
         `<b>STATUS:</b> ⏳ KO'RIB CHIQISH JARAYONIDA\n\n` +
         `<i>(Viza so'rovnomasi elchixona yoki TIV tomonidan ko'rib chiqilmoqda)</i>`;
     } else {
@@ -540,13 +540,13 @@ async function handleMessage(msg) {
       const pass = escapeHtml(getVal("Pasport raqami") || passport);
       const place = escapeHtml(getVal("Viza olish joyi"));
 
-      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n───────────────────────\n` +
+      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n──────────────\n` +
         `📘 <b>Pasport raqami:</b> <code>${pass}</code>\n` +
         (name ? `👤 <b>Ism, Familiya:</b> ${name}\n` : '') +
         (teleks ? `🪪 <b>Teleks:</b> ${teleks}\n` : '') +
         (barcode ? `💳 <b>Barkod:</b> <code>${barcode}</code>\n` : '') +
         (place ? `🌐 <b>Viza punkti:</b> ${place}\n` : '') +
-        `───────────────────────\n` +
+        `──────────────\n` +
         `<b>STATUS:</b> ❇️ RUXSAT BERILDI (APPROVED)`;
     }
 
