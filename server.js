@@ -250,76 +250,80 @@ async function checkMfaVisa(passport) {
 // ============================================
 // ULTRA-TEZKOR RASM (SCREENSHOT) GENERATORI (0.05s)
 // ============================================
-function generateCardPng(passport, html) {
+function generateOriginalMfaCard(passport, html) {
   const isNotFound = html.includes("Siz uchun ma'lumot yo") || html.includes("ma'lumot yo`q") || html.includes("ma'lumot yo'q");
   const isPending = html.includes("ko`rib chiqish jarayonida") || html.includes("ko'rib chiqish jarayonida") || html.includes("jarayonida");
 
-  let badgeColor = "#10b981";
-  let badgeText = "TASDIQLANGAN";
+  let title = "Natija:";
   let rows = [];
 
   if (isNotFound) {
-    badgeColor = "#ef4444";
-    badgeText = "MA'LUMOT YO'Q";
+    title = "Natija: Siz uchun ma'lumot yo'q";
     rows = [
-      { label: "Pasport raqami:", val: passport, bold: true },
-      { label: "Holati:", val: "Siz uchun ma'lumot yo'q", bold: true },
-      { label: "Izoh:", val: "TIV teleks bazasida ushbu pasport topilmadi", bold: false }
+      { label: "Holati", val: "Ma'lumot topilmadi" },
+      { label: "Pasport raqami", val: passport }
     ];
   } else if (isPending) {
-    badgeColor = "#f59e0b";
-    badgeText = "JARAYONDA";
+    title = "Natija: Viza so`rovnomasi ko`rib chiqish jarayonida";
     rows = [
-      { label: "Pasport raqami:", val: passport, bold: true },
-      { label: "Holati:", val: "Ko'rib chiqish jarayonida", bold: true },
-      { label: "Izoh:", val: "Hujjatlar konsullik boshqarmasi tomonidan tekshirilmoqda", bold: false }
+      { label: "Holati", val: "Ko'rib chiqish jarayonida" },
+      { label: "Pasport raqami", val: passport }
     ];
   } else {
     const getVal = (label) => {
       const m = html.match(new RegExp("<td>" + label + "<\\/td>\\s*<td>[\\s\\S]*?<b>([\\s\\S]*?)<\\/b>", "i"));
       return m ? m[1].replace(/<[^>]+>/g, "").trim() : "";
     };
-    const name = getVal("Familiya, ism");
-    const teleks = getVal("Teleks");
     const barcode = getVal("So`rovnoma ID \\(Barkod\\)") || getVal("Barkod") || getVal("So'rovnoma ID");
+    const teleks = getVal("Teleks");
+    const name = getVal("Familiya, ism");
+    const pass = getVal("Pasport raqami") || passport;
     const place = getVal("Viza olish joyi");
 
-    rows = [
-      { label: "Pasport raqami:", val: passport, bold: true }
-    ];
-    if (name) rows.push({ label: "Familiya, ism:", val: name, bold: true });
-    if (teleks) rows.push({ label: "Teleks raqami:", val: teleks, bold: true });
-    if (barcode) rows.push({ label: "So'rovnoma ID:", val: barcode, bold: true });
-    if (place) rows.push({ label: "Viza olish joyi:", val: place, bold: true });
-    rows.push({ label: "Holati:", val: "Tasdiqlangan (Ruxsat berilgan)", bold: true });
+    if (barcode) rows.push({ label: "So`rovnoma ID (Barkod)", val: barcode });
+    if (teleks) rows.push({ label: "Teleks", val: teleks });
+    if (name) rows.push({ label: "Familiya, ism", val: name });
+    rows.push({ label: "Pasport raqami", val: pass });
+    if (place) rows.push({ label: "Viza olish joyi", val: place });
   }
 
-  const height = 120 + rows.length * 45 + 50;
+  const rowHeight = 42;
+  const tableHeight = rows.length * rowHeight;
+  const boxHeight = 65 + tableHeight + 20;
+  const totalHeight = boxHeight + 50;
+  const totalWidth = 640;
+  const boxWidth = 580;
+  const boxX = 30;
+  const boxY = 25;
+
   let rowsSvg = "";
-  let y = 120;
+  let y = boxY + 65 + 24;
   rows.forEach((r, idx) => {
     rowsSvg += `
-      <text x="50" y="${y}" font-weight="600" fill="#64748b" font-family="Arial" font-size="15">${escapeXml(r.label)}</text>
-      <text x="240" y="${y}" font-weight="${r.bold ? 'bold' : 'normal'}" fill="#0f172a" font-family="Arial" font-size="${r.bold ? '16' : '15'}">${escapeXml(r.val)}</text>
-      ${idx < rows.length - 1 ? `<line x1="50" y1="${y + 15}" x2="670" y2="${y + 15}" stroke="#f1f5f9" stroke-width="1"/>` : ''}
+      <text x="${boxX + 25}" y="${y}" font-family="Arial" font-size="14" font-weight="normal" fill="#555555">${escapeXml(r.label)}</text>
+      <text x="${boxX + 210}" y="${y}" font-family="Arial" font-size="14" font-weight="bold" fill="#111111">${escapeXml(r.val)}</text>
+      ${idx < rows.length - 1 ? `<line x1="${boxX + 25}" y1="${y + 16}" x2="${boxX + boxWidth - 25}" y2="${y + 16}" stroke="#f4f4f4" stroke-width="1"/>` : ''}
     `;
-    y += 45;
+    y += rowHeight;
   });
 
   const svg = `
-  <svg width="720" height="${height}" viewBox="0 0 720 ${height}" xmlns="http://www.w3.org/2000/svg">
-    <rect x="20" y="15" width="680" height="${height - 30}" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
-    <rect x="20" y="15" width="680" height="55" rx="12" fill="#1e293b"/>
-    <rect x="20" y="55" width="680" height="15" fill="#1e293b"/>
-    <text x="45" y="50" font-family="Arial" font-size="18" font-weight="bold" fill="#ffffff">O'ZBEKISTON RESPUBLIKASI TIV</text>
+  <svg width="${totalWidth}" height="${totalHeight}" viewBox="0 0 ${totalWidth} ${totalHeight}" xmlns="http://www.w3.org/2000/svg">
+    <!-- AdminLTE Outer Background -->
+    <rect width="${totalWidth}" height="${totalHeight}" fill="#ecf0f5"/>
+
+    <!-- AdminLTE Box Container -->
+    <rect x="${boxX}" y="${boxY}" width="${boxWidth}" height="${boxHeight}" rx="4" fill="#ffffff" stroke="#d2d6de" stroke-width="1"/>
     
-    <rect x="490" y="27" width="185" height="32" rx="6" fill="${badgeColor}"/>
-    <text x="582" y="49" font-family="Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">${badgeText}</text>
+    <!-- AdminLTE Box Primary Blue Top Border (3px) -->
+    <rect x="${boxX}" y="${boxY}" width="${boxWidth}" height="4" rx="2" fill="#3c8dbc"/>
 
+    <!-- Box Header Title -->
+    <text x="${boxX + 20}" y="${boxY + 38}" font-family="Arial" font-size="18" font-weight="bold" fill="#444444">${escapeXml(title)}</text>
+    <line x1="${boxX}" y1="${boxY + 52}" x2="${boxX + boxWidth}" y2="${boxY + 52}" stroke="#f4f4f4" stroke-width="1.5"/>
+
+    <!-- Table Rows -->
     ${rowsSvg}
-
-    <rect x="20" y="${height - 45}" width="680" height="30" rx="12" fill="#f8fafc"/>
-    <text x="45" y="${height - 25}" font-family="Arial" font-size="12" fill="#94a3b8">Rasmiy manba: visa.mfa.uz</text>
   </svg>
   `;
 
@@ -336,7 +340,7 @@ function generateCardPng(passport, html) {
   };
 
   const resvg = new Resvg(svg, {
-    fitTo: { mode: 'width', value: 1080 },
+    fitTo: { mode: 'width', value: 1160 },
     font: fontOptions
   });
   return resvg.render().asPng();
@@ -512,27 +516,45 @@ async function handleMessage(msg) {
     const isNotFound = checkRes.html.includes("Siz uchun ma'lumot yo") || checkRes.html.includes("ma'lumot yo`q") || checkRes.html.includes("ma'lumot yo'q");
     const isPending = checkRes.html.includes("ko`rib chiqish jarayonida") || checkRes.html.includes("ko'rib chiqish jarayonida") || checkRes.html.includes("jarayonida");
 
-    let caption = `📋 <b>Rasmiy Natija:</b> <code>${passport}</code>\n`;
+    let textMsg = '';
     if (isNotFound) {
-      caption += `❌ <b>Holati:</b> Siz uchun ma'lumot yo'q`;
+      textMsg = `📄 <b>Natija:</b> <code>${passport}</code>\n━━━━━━━━━━━━━━━━━━━━\n❌ <b>Siz uchun ma'lumot yo'q</b>\n━━━━━━━━━━━━━━━━━━━━\n<i>(TIV teleks bazasida ushbu pasport bo'yicha ma'lumot topilmadi)</i>`;
     } else if (isPending) {
-      caption += `⏳ <b>Holati:</b> Ko'rib chiqish jarayonida`;
+      textMsg = `📋 <b>VIZA NATIJASI</b>\n━━━━━━━━━━━━━━━━━━━━\n📄 <b>Pasport:</b> <code>${passport}</code>\n━━━━━━━━━━━━━━━━━━━━\n⏳ <b>Holati:</b> Ko'rib chiqish jarayonida`;
     } else {
-      caption += `✅ <b>Holati:</b> Tasdiqlangan (Ruxsat berilgan)`;
+      const getVal = (label) => {
+        const m = checkRes.html.match(new RegExp("<td>" + label + "<\\/td>\\s*<td>[\\s\\S]*?<b>([\\s\\S]*?)<\\/b>", "i"));
+        return m ? m[1].replace(/<[^>]+>/g, "").trim() : "";
+      };
+      const barcode = escapeHtml(getVal("So`rovnoma ID \\(Barkod\\)") || getVal("Barkod") || getVal("So'rovnoma ID"));
+      const teleks = escapeHtml(getVal("Teleks"));
+      const name = escapeHtml(getVal("Familiya, ism"));
+      const pass = escapeHtml(getVal("Pasport raqami") || passport);
+      const place = escapeHtml(getVal("Viza olish joyi"));
+
+      textMsg = `📋 <b>VIZA NATIJASI</b>\n━━━━━━━━━━━━━━━━━━━━\n` +
+        `📄 <b>Pasport:</b> <code>${pass}</code>\n` +
+        (name ? `👤 <b>Familiya, ism:</b> ${name}\n` : '') +
+        (teleks ? `📑 <b>Teleks:</b> ${teleks}\n` : '') +
+        (barcode ? `🔢 <b>Barkod:</b> <code>${barcode}</code>\n` : '') +
+        (place ? `🏛 <b>Viza olish joyi:</b> ${place}\n` : '') +
+        `━━━━━━━━━━━━━━━━━━━━\n` +
+        `✅ <b>Holati:</b> Tasdiqlangan (Ruxsat berilgan)`;
     }
 
+    // 1. Birinchi yozma matnli kartani yuboramiz:
+    await tgApi('sendMessage', {
+      chat_id: chatId,
+      text: textMsg,
+      parse_mode: 'HTML'
+    });
+
+    // 2. Saytdan olingan original screenshot rasmini yuboramiz:
     try {
-      // Tezkor PNG rasm generatsiyasi va yuborish:
-      const pngBuffer = generateCardPng(passport, checkRes.html);
-      await sendPhoto(chatId, pngBuffer, caption);
+      const pngBuffer = generateOriginalMfaCard(passport, checkRes.html);
+      await sendPhoto(chatId, pngBuffer, `📄 <b>Rasmiy Tasdiq:</b> <code>${passport}</code>`);
     } catch(err) {
       console.error('[IMAGE SEND ERR]:', err.message);
-      // Agar rasmda kutilmagan xatolik bo'lsa matn yuboramiz:
-      await tgApi('sendMessage', {
-        chat_id: chatId,
-        text: caption,
-        parse_mode: 'HTML'
-      });
     }
   } else {
     await tgApi('sendMessage', {
