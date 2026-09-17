@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: mfa-visa-bot
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: ADMIN_ID
+        value: "5928834268"
+      - key: NODE_TLS_REJECT_UNAUTHORIZED
+        value: "0"
