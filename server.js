@@ -299,8 +299,8 @@ function generateCardPng(passport, html) {
   let y = 120;
   rows.forEach((r, idx) => {
     rowsSvg += `
-      <text x="50" y="${y}" font-weight="600" fill="#64748b" font-family="Arial, sans-serif" font-size="15">${escapeXml(r.label)}</text>
-      <text x="240" y="${y}" font-weight="${r.bold ? 'bold' : 'normal'}" fill="#0f172a" font-family="Arial, sans-serif" font-size="${r.bold ? '16' : '15'}">${escapeXml(r.val)}</text>
+      <text x="50" y="${y}" font-weight="600" fill="#64748b" font-family="Arial" font-size="15">${escapeXml(r.label)}</text>
+      <text x="240" y="${y}" font-weight="${r.bold ? 'bold' : 'normal'}" fill="#0f172a" font-family="Arial" font-size="${r.bold ? '16' : '15'}">${escapeXml(r.val)}</text>
       ${idx < rows.length - 1 ? `<line x1="50" y1="${y + 15}" x2="670" y2="${y + 15}" stroke="#f1f5f9" stroke-width="1"/>` : ''}
     `;
     y += 45;
@@ -311,19 +311,34 @@ function generateCardPng(passport, html) {
     <rect x="20" y="15" width="680" height="${height - 30}" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
     <rect x="20" y="15" width="680" height="55" rx="12" fill="#1e293b"/>
     <rect x="20" y="55" width="680" height="15" fill="#1e293b"/>
-    <text x="45" y="50" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#ffffff">O'ZBEKISTON RESPUBLIKASI TIV</text>
+    <text x="45" y="50" font-family="Arial" font-size="18" font-weight="bold" fill="#ffffff">O'ZBEKISTON RESPUBLIKASI TIV</text>
     
     <rect x="490" y="27" width="185" height="32" rx="6" fill="${badgeColor}"/>
-    <text x="582" y="49" font-family="Arial, sans-serif" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">${badgeText}</text>
+    <text x="582" y="49" font-family="Arial" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">${badgeText}</text>
 
     ${rowsSvg}
 
     <rect x="20" y="${height - 45}" width="680" height="30" rx="12" fill="#f8fafc"/>
-    <text x="45" y="${height - 25}" font-family="Arial, sans-serif" font-size="12" fill="#94a3b8">Rasmiy manba: visa.mfa.uz</text>
+    <text x="45" y="${height - 25}" font-family="Arial" font-size="12" fill="#94a3b8">Rasmiy manba: visa.mfa.uz</text>
   </svg>
   `;
 
-  const resvg = new Resvg(svg, { fitTo: { mode: "width", value: 1080 } });
+  const FONT_REGULAR = path.join(__dirname, 'fonts', 'arial.ttf');
+  const FONT_BOLD = path.join(__dirname, 'fonts', 'arialbd.ttf');
+
+  const fontOptions = fs.existsSync(FONT_REGULAR) ? {
+    loadSystemFonts: false,
+    fontFiles: [FONT_REGULAR, FONT_BOLD],
+    defaultFontFamily: 'Arial'
+  } : {
+    loadSystemFonts: true,
+    defaultFontFamily: 'Arial'
+  };
+
+  const resvg = new Resvg(svg, {
+    fitTo: { mode: 'width', value: 1080 },
+    font: fontOptions
+  });
   return resvg.render().asPng();
 }
 
