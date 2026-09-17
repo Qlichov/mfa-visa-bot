@@ -29,10 +29,10 @@ const PORT = parseInt(process.env.PORT || '3000', 10);
 const RENDER_URL = process.env.RENDER_EXTERNAL_URL 
   ? (process.env.RENDER_EXTERNAL_URL.startsWith('http') ? process.env.RENDER_EXTERNAL_URL : `https://${process.env.RENDER_EXTERNAL_URL}`) 
   : '';
-const BASE_URL = (process.env.WEBHOOK_URL || process.env.PUBLIC_URL || RENDER_URL || '').replace(/\/+$/, '');
+const BASE_URL = (process.env.WEBHOOK_URL || process.env.PUBLIC_URL || RENDER_URL || 'https://mfa-visa-bot.onrender.com').replace(/\/+$/, '');
 
 // Self-ping Keep-Alive Configuration
-const PING_URL = (process.env.PING_URL || BASE_URL).replace(/\/+$/, '');
+const PING_URL = (process.env.PING_URL || BASE_URL || 'https://mfa-visa-bot.onrender.com').replace(/\/+$/, '');
 const PING_INTERVAL_MS = parseInt(process.env.PING_INTERVAL_MS || String(10 * 60 * 1000), 10);
 
 // Gemini API Keys:
