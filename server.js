@@ -518,9 +518,17 @@ async function handleMessage(msg) {
 
     let textMsg = '';
     if (isNotFound) {
-      textMsg = `📄 <b>Natija:</b> <code>${passport}</code>\n━━━━━━━━━━━━━━━━━━━━\n❌ <b>Siz uchun ma'lumot yo'q</b>\n━━━━━━━━━━━━━━━━━━━━\n<i>(TIV teleks bazasida ushbu pasport bo'yicha ma'lumot topilmadi)</i>`;
+      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n───────────────────────\n` +
+        `📘 <b>Pasport raqami:</b> <code>${passport}</code>\n` +
+        `───────────────────────\n` +
+        `<b>STATUS:</b> ❌ SIZ UCHUN MA'LUMOT YO'Q\n\n` +
+        `<i>(TIV teleks bazasida ushbu pasport bo'yicha ma'lumot topilmadi)</i>`;
     } else if (isPending) {
-      textMsg = `📋 <b>VIZA NATIJASI</b>\n━━━━━━━━━━━━━━━━━━━━\n📄 <b>Pasport:</b> <code>${passport}</code>\n━━━━━━━━━━━━━━━━━━━━\n⏳ <b>Holati:</b> Ko'rib chiqish jarayonida`;
+      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n───────────────────────\n` +
+        `📘 <b>Pasport raqami:</b> <code>${passport}</code>\n` +
+        `───────────────────────\n` +
+        `<b>STATUS:</b> ⏳ KO'RIB CHIQISH JARAYONIDA\n\n` +
+        `<i>(Viza so'rovnomasi elchixona yoki TIV tomonidan ko'rib chiqilmoqda)</i>`;
     } else {
       const getVal = (label) => {
         const m = checkRes.html.match(new RegExp("<td>" + label + "<\\/td>\\s*<td>[\\s\\S]*?<b>([\\s\\S]*?)<\\/b>", "i"));
@@ -532,14 +540,14 @@ async function handleMessage(msg) {
       const pass = escapeHtml(getVal("Pasport raqami") || passport);
       const place = escapeHtml(getVal("Viza olish joyi"));
 
-      textMsg = `📋 <b>VIZA NATIJASI</b>\n━━━━━━━━━━━━━━━━━━━━\n` +
-        `📄 <b>Pasport:</b> <code>${pass}</code>\n` +
-        (name ? `👤 <b>Familiya, ism:</b> ${name}\n` : '') +
-        (teleks ? `📑 <b>Teleks:</b> ${teleks}\n` : '') +
-        (barcode ? `🔢 <b>Barkod:</b> <code>${barcode}</code>\n` : '') +
-        (place ? `🏛 <b>Viza olish joyi:</b> ${place}\n` : '') +
-        `━━━━━━━━━━━━━━━━━━━━\n` +
-        `✅ <b>Holati:</b> Tasdiqlangan (Ruxsat berilgan)`;
+      textMsg = `✨ <b>VIZA MONITORING NATIJASI</b> ✨\n───────────────────────\n` +
+        `📘 <b>Pasport raqami:</b> <code>${pass}</code>\n` +
+        (name ? `👤 <b>Ism, Familiya:</b> ${name}\n` : '') +
+        (teleks ? `🪪 <b>Teleks:</b> ${teleks}\n` : '') +
+        (barcode ? `💳 <b>Barkod:</b> <code>${barcode}</code>\n` : '') +
+        (place ? `🌐 <b>Viza punkti:</b> ${place}\n` : '') +
+        `───────────────────────\n` +
+        `<b>STATUS:</b> ❇️ RUXSAT BERILDI (APPROVED)`;
     }
 
     // 1. Birinchi yozma matnli kartani yuboramiz:
@@ -552,7 +560,8 @@ async function handleMessage(msg) {
     // 2. Saytdan olingan original screenshot rasmini yuboramiz:
     try {
       const pngBuffer = generateOriginalMfaCard(passport, checkRes.html);
-      await sendPhoto(chatId, pngBuffer, `📄 <b>Rasmiy Tasdiq:</b> <code>${passport}</code>`);
+      const captionPrefix = isNotFound ? '❌' : (isPending ? '⏳' : '✅');
+      await sendPhoto(chatId, pngBuffer, `${captionPrefix} <b>Rasmiy Tasdiq:</b> <code>${passport}</code>`);
     } catch(err) {
       console.error('[IMAGE SEND ERR]:', err.message);
     }
