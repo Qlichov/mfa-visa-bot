@@ -1,0 +1,4 @@
+node_modules/
+.env
+*.metadata.json
+npm-debug.log*

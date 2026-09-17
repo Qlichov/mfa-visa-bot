@@ -1,0 +1,15 @@
+{
+  "name": "mfa-visa-bot-server",
+  "version": "5.0.0",
+  "description": "Telegram Visa MFA Bot 24/7 Cloud Engine",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
