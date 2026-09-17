@@ -21,7 +21,7 @@ process.on('uncaughtException', (err) => {
 // ============================================
 // CONFIGURATION & ENVIRONMENT
 // ============================================
-const TOKEN = process.env.BOT_TOKEN || Buffer.from('ODkwODEzNjI4NTpBQUhwN3FSYlA1cktnODNXNXBOODd6eVZ1by0tWXBZUDEtTXc=', 'base64').toString('utf8');
+const TOKEN = process.env.BOT_TOKEN || Buffer.from('ODkwODEzNjI4NTpBQUhwN3FSYlA1cktnODNXNXBOODd6eVp1by0tWXBWUDFNdw==', 'base64').toString('utf8');
 const ADMIN_ID = process.env.ADMIN_ID || '5928834268';
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
@@ -35,7 +35,7 @@ const BASE_URL = (process.env.WEBHOOK_URL || process.env.PUBLIC_URL || RENDER_UR
 const PING_URL = (process.env.PING_URL || BASE_URL || 'https://mfa-visa-bot.onrender.com').replace(/\/+$/, '');
 const PING_INTERVAL_MS = parseInt(process.env.PING_INTERVAL_MS || String(10 * 60 * 1000), 10);
 
-// Gemini API Keys:
+// Gemini API Keys (6 ta kalit rotatsiyasi):
 function getGeminiKeys() {
   if (process.env.GEMINI_API_KEYS) {
     return process.env.GEMINI_API_KEYS.split(/[,;\s]+/).map(s => s.trim()).filter(Boolean);
@@ -45,11 +45,11 @@ function getGeminiKeys() {
   }
   return [
     Buffer.from('QVEuQWI4Uk42TDdjSmg5VWFBZExtcTBocGs5UExsTkttd0ZGN0pXRUxraTlBUmFLc090Nmc=', 'base64').toString('utf8'),
-    Buffer.from('QVEuQWI4Uk42SUtYNEpJaDVCbEhfSWJRcERja3NGb1dJNVIhenZ2OGJxU1N2dk1yVEFJYXc=', 'base64').toString('utf8'),
+    Buffer.from('QVEuQWI4Uk42SUtYNEpJaDVCbEhfSWJRcURja3NGb1dJNVJhenZ2OGJxU1N2dk1yVEFJYXc=', 'base64').toString('utf8'),
     Buffer.from('QVEuQWI4Uk42TG00ajFLZ0RaRkFTX3E5dWQtRDFLMFh0U2x5NVV3LS0zT0ZZV213OUwzMGc=', 'base64').toString('utf8'),
     Buffer.from('QVEuQWI4Uk42SVlFeUdsM0ppcWJkeEdNSVJ2VVJKaDNnSFlOdlZrcTVfWlgyME1tNFlGTnc=', 'base64').toString('utf8'),
-    Buffer.from('QVEuQWI4Uk42SWNnNEhRb0RIM1phUlB0N19UMDl3Z2I1QWNoOVBPSEgtaUN3NE1sdTdnM0Zn', 'base64').toString('utf8'),
-    Buffer.from('QVEuQWI4Uk42TE1XTDlBNDNNbGRBTzBCWXpuUzZnUEhrQW91R0lLSGZwUUVIRnVBUUwwMWc=', 'base64').toString('utf8')
+    Buffer.from('QVEuQWI4Uk42SWNnNEhRb0RIM1phUlB0N19UMDl3Z2I1QWNoOVBPSC1pQ3c0TWx1N2czRmc=', 'base64').toString('utf8'),
+    Buffer.from('QVEuQWI4Uk42TE1XTDlBNDNNbGRBTzBCWXpuUzZnUEhrQW91R0lLSHZwUUVIRnVBUUwwMWc=', 'base64').toString('utf8')
   ];
 }
 
